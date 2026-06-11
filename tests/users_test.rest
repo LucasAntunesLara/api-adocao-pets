@@ -1,0 +1,56 @@
+### Configuração de Variáveis Locais do REST Client
+@baseUrl = http://localhost:3000
+
+### 1. Cenário de Sucesso: Cadastrar um novo usuário adotante (Adopter)
+# O sistema deve criptografar a senha e assumir o perfil 'adopter' por padrão.
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+    "name": "Adotante 2",
+    "email": "adotante2@gmail.com",
+    "password": "senhaAdotante123",
+    "phone": "(54) 99999-5555"
+}
+
+###
+
+### 2. Cenário de Sucesso: Cadastrar um usuário Administrador (Admin)
+# Passando explicitamente o campo 'role' como 'admin'.
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+    "name": "Admnistrador 2",
+    "email": "admin2@gmail.com",
+    "password": "Adm123",
+    "phone": "(54) 98888-4444",
+    "role": "admin"
+}
+
+###
+
+### 3. Cenário de Erro: Tentar cadastrar com e-mail duplicado
+# Deve retornar Status 400 (Bad Request) informando que o e-mail já existe.
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+    "name": "Adotante 2 duplicado",
+    "email": "adotante2@gmail.com",
+    "password": "12345",
+    "phone": "(54) 99999-5555"
+}
+
+###
+
+### 4. Cenário de Erro: Falha de validação (Campos obrigatórios ausentes)
+# Enviando sem o campo 'password'. Deve retornar Status 400.
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+    "name": "Usuário Incompleto",
+    "email": "incompleto@gmail.com",
+    "phone": "(54) 91111-2222"
+}
