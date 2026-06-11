@@ -19,6 +19,16 @@ class PetController {
     }
   }
 
+  static async getById(req, res) {
+    try {
+      const id = req.params.id
+      const pet = await PetService.getPetById(id)
+      res.json(pet)
+    } catch (error) {
+      res.status(404).json({error: error.message})
+    }
+  }
+
   static async create(req, res) {
     try {
       const id = await PetService.createPet(req.body)
