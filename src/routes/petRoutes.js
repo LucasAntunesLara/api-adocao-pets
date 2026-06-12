@@ -11,3 +11,5 @@ router.get('/:id', PetController.getById)
 router.post('/', PetController.create)
 router.put('/:id', PetController.update)
 router.delete('/:id', PetController.delete)
+
+module.exports = router
