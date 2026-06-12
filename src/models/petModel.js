@@ -27,9 +27,7 @@ class PetModel {
   }
 
   static async findAll() {
-    const [rows] = await db.query(
-      'SELECT id, name, email, phone, role FROM pets',
-    )
+    const [rows] = await db.query('SELECT * FROM pets')
 
     return rows
   }
