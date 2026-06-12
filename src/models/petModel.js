@@ -20,7 +20,7 @@ class PetModel {
 
   static async findAvailable() {
     const [rows] = await db.query(
-      'SELECT * role FROM pets where status = available',
+      'SELECT * FROM pets WHERE status = "available"',
     )
 
     return rows
