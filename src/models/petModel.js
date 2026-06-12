@@ -32,10 +32,10 @@ class PetModel {
     return rows
   }
 
-  static async update(id, {name, phone}) {
+  static async update(id, {name, age, species, size, status, description}) {
     await db.query(
       'UPDATE pets SET name = ?, age = ?, species = ?, size = ?, status = ?, description = ?',
-      [name, phone, id],
+      [name, age, species, size, status, description, id],
     )
   }
 
