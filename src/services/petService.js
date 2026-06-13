@@ -72,7 +72,7 @@ class PetService {
 
     const pet = await PetModel.findById(id)
 
-    if (pet.status === 'adopted') {
+    if (pet && pet.status === 'adopted') {
       const error = new Error(
         'Não é permitido remover um pet que já foi adotado.',
       )
