@@ -36,7 +36,7 @@ class PetModel {
     const {name, age, species, size, status, description} = petData
 
     const [result] = await db.query(
-      'UPDATE pets SET name = ?, age = ?, species = ?, size = ?, status = ?, description = ?',
+      'UPDATE pets SET name = ?, age = ?, species = ?, size = ?, status = ?, description = ? WHERE id = ?',
       [name, age, species, size, status, description, id],
     )
 
