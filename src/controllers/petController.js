@@ -12,10 +12,10 @@ class PetController {
 
   static async getAll(req, res) {
     try {
-      const pets = await PetService.getAllPets()
+      const pets = await PetService.getAllPets(req.user)
       res.json(pets)
     } catch (error) {
-      res.status(500).json({error: error.message})
+      res.status(error.status || 500).json({error: error.message})
     }
   }
 
@@ -25,36 +25,36 @@ class PetController {
       const pet = await PetService.getPetById(id)
       res.json(pet)
     } catch (error) {
-      res.status(404).json({error: error.message})
+      res.status(error.status || 404).json({error: error.message})
     }
   }
 
   static async create(req, res) {
     try {
-      const id = await PetService.createPet(req.body)
+      const id = await PetService.createPet(req.body, req.user)
       res.status(201).json({message: 'Pet criado com sucesso.', id})
     } catch (error) {
-      res.status(400).json({error: error.message})
+      res.status(error.status || 400).json({error: error.message})
     }
   }
 
   static async update(req, res) {
     try {
       const id = req.params.id
-      await PetService.updatePet(id, req.body)
+      await PetService.updatePet(id, req.body, req.user)
       res.json({message: 'Pet atualizado com sucesso.'})
     } catch (error) {
-      res.status(400).json({error: error.message})
+      res.status(error.status || 400).json({error: error.message})
     }
   }
 
   static async delete(req, res) {
     try {
       const id = req.params.id
-      await PetService.deletePet(id)
+      await PetService.deletePet(id, req.user)
       res.json({message: 'Pet deletado com sucesso.'})
     } catch (error) {
-      res.status(400).json({error: error.message})
+      res.status(error.status || 500).json({error: error.message})
     }
   }
 }
