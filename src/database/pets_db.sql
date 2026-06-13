@@ -42,14 +42,14 @@ VALUES
     (
         'Administrador',
         'admin@gmail.com',
-        '123123',
+        '$2b$10$/5/nPQVAIfPFmu2roe307ePdx/OncBetAwA7Jnbh77/h6RUG6znDy',
         '(54) 99999-1111',
         'admin'
     ),
     (
         'Adotante',
         'adotante@gmail.com',
-        '123123',
+        '$2b$10$/5/nPQVAIfPFmu2roe307ePdx/OncBetAwA7Jnbh77/h6RUG6znDy',
         '(54) 99999-2222',
         'adopter'
     );
@@ -62,7 +62,7 @@ VALUES
         2,
         'dog',
         'medium',
-        'available',
+        'adopted',
         'Cãozinho muito dócil e brincalhão, ideal para casas com espaço.'
     ),
     (
