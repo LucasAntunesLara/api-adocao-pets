@@ -32,15 +32,20 @@ class PetModel {
     return rows
   }
 
-  static async update(id, {name, age, species, size, status, description}) {
-    await db.query(
+  static async update(id, petData) {
+    const {name, age, species, size, status, description} = petData
+
+    const [result] = await db.query(
       'UPDATE pets SET name = ?, age = ?, species = ?, size = ?, status = ?, description = ?',
       [name, age, species, size, status, description, id],
     )
+
+    return result.affectedRows
   }
 
   static async deletePet(id) {
-    await db.query('DELETE FROM pets WHERE id = ?', [id])
+    const [result] = await db.query('DELETE FROM pets WHERE id = ?', [id])
+    return result.affectedRows
   }
 }
 
