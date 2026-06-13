@@ -1,0 +1,121 @@
+###
+### Configuração de Variáveis Locais do REST Client
+@baseUrl = http://localhost:3000
+
+### 1. Autenticação como Administrador (Necessário para gerar o token de Admin)
+# @name loginAdmin
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "admin@gmail.com",
+    "password": "123123"
+}
+
+###
+
+### Armazena o token gerado no login acima para uso posterior
+@tokenAdmin = {{loginAdmin.response.body.token}}
+
+
+###
+
+# ### 2. Autenticação como Adotante (Para testar restrições de acesso)
+# @name loginAdopter
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "adotante@gmail.com",
+    "password": "123123"
+}
+
+###
+
+# ### Armazena o token do adotante
+@tokenAdopter= {{loginAdopter.response.body.token}}
+
+### ============================================================================
+### ROTAS PÚBLICAS
+### ============================================================================
+### 3. Cenário de Sucesso: Listar apenas Pets com status 'available' (Público)
+# Qualquer usuário, mesmo não logado, deve conseguir acessar.
+GET {{baseUrl}}/pets/available
+
+### ============================================================================
+### ROTAS PROTEGIDAS (REQUEREM PERFIL ADMIN)
+### ============================================================================
+### 4. Cenário de Sucesso: Cadastrar um novo Pet (Como Admin)
+# Deve retornar Status 201 Created e o pet com status padrão 'available'.
+POST {{baseUrl}}/pets
+Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
+
+{
+    "name": "Rex",
+    "age": 3,
+    "species": "dog",
+    "size": "medium",
+    "description": "Muito brincalhão e se dá bem com crianças."
+}
+
+###
+
+### 5. Cenário de Erro: Tentar cadastrar um Pet sendo Adotante
+# Deve retornar Status 403 Forbidden (Não autorizado pelo perfil).
+POST {{baseUrl}}/pets
+Content-Type: application/json
+Authorization: Bearer {{tokenAdopter}}
+
+{
+    "name": "Baleia",
+    "age": 1,
+    "species": "cat",
+    "size": "small",
+    "description": "Gatinha calma."
+}
+
+###
+
+### 6. Cenário de Sucesso: Listar todos os Pets (Como Admin)
+# Deve trazer todos os animais cadastrados, inclusive os adotados.
+GET {{baseUrl}}/pets
+Authorization: Bearer {{tokenAdmin}}
+
+###
+
+### 7. Cenário de Sucesso: Buscar um Pet específico por ID (Como Admin)
+# Supondo que estamos buscando o pet com ID 1
+GET {{baseUrl}}/pets/1
+Authorization: Bearer {{tokenAdmin}}
+
+###
+
+### 8. Cenário de Sucesso: Atualizar dados de um Pet (Como Admin)
+# Modificando informações do pet ID 1
+PUT {{baseUrl}}/pets/1
+Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
+
+{
+    "name": "Thor Atualizado",
+    "age": 2,
+    "species": "dog",
+    "size": "large",
+    "status": "available",
+    "description": "Atualização de descrição para teste."
+}
+
+###
+
+### 9. Cenário de Erro: Tentar remover um Pet sem enviar Token
+# Deve retornar Status 401 Unauthorized (Falta de autenticação).
+DELETE {{baseUrl}}/pets/1
+
+###
+
+### 10. Cenário de Sucesso/Erro: Remover um Pet (Como Admin)
+# Regra de negócio importante: Só deve deletar se o status for 'available'. 
+# Se o status for 'adopted', a camada Service deve barrar e retornar Status 400.
+DELETE {{baseUrl}}/pets/1
+Authorization: Bearer {{tokenAdmin}}
