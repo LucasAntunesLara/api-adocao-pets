@@ -2,11 +2,11 @@ const db = require('../config/db')
 
 class PetModel {
   static async create(petData) {
-    const {name, age, species, size, status, description} = petData
+    const {name, age, species, size, description} = petData
 
     const [result] = await db.query(
       'INSERT INTO pets (name, age, species, size, status, description) VALUES (?, ?, ?, ?, "available", ?)',
-      [name, age, species, size, status, description],
+      [name, age, species, size, description],
     )
 
     return result.insertId
