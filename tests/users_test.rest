@@ -1,8 +1,46 @@
 ### Configuração de Variáveis Locais do REST Client
 @baseUrl = http://localhost:3000
 
-### 1. Cenário de Sucesso: Cadastrar um novo usuário adotante (Adopter)
+### Autenticação como Administrador (Necessário para gerar o token de Admin)
+# @name loginAdmin
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "admin@gmail.com",
+    "password": "123123"
+}
+
+###
+
+### Armazena o token gerado no login acima para uso posterior
+@tokenAdmin = {{loginAdmin.response.body.token}}
+
+
+###
+
+# ### Autenticação como Adotante (Para testar restrições de acesso)
+# @name loginAdopter
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "adotante@gmail.com",
+    "password": "123123"
+}
+
+###
+
+# ### Armazena o token do adotante
+@tokenAdopter= {{loginAdopter.response.body.token}}
+
+### ============================================================================
+### 1. ENDPOINT PÚBLICO: CADASTRO (POST /users)
+### ============================================================================
+
+### Cenário de Sucesso: Cadastrar um novo usuário adotante (Adopter)
 # O sistema deve criptografar a senha e assumir o perfil 'adopter' por padrão.
+# @name newAdopter
 POST {{baseUrl}}/users
 Content-Type: application/json
 
@@ -15,22 +53,7 @@ Content-Type: application/json
 
 ###
 
-### 2. Cenário de Sucesso: Cadastrar um usuário Administrador (Admin)
-# Passando explicitamente o campo 'role' como 'admin'.
-POST {{baseUrl}}/users
-Content-Type: application/json
-
-{
-    "name": "Admnistrador 2",
-    "email": "admin2@gmail.com",
-    "password": "Adm123",
-    "phone": "(54) 98888-4444",
-    "role": "admin"
-}
-
-###
-
-### 3. Cenário de Erro: Tentar cadastrar com e-mail duplicado
+### Cenário de Erro: Tentar cadastrar com e-mail duplicado
 # Deve retornar Status 400 (Bad Request) informando que o e-mail já existe.
 POST {{baseUrl}}/users
 Content-Type: application/json
@@ -44,7 +67,7 @@ Content-Type: application/json
 
 ###
 
-### 4. Cenário de Erro: Falha de validação (Campos obrigatórios ausentes)
+### Cenário de Erro: Falha de validação (Campos obrigatórios ausentes)
 # Enviando sem o campo 'password'. Deve retornar Status 400.
 POST {{baseUrl}}/users
 Content-Type: application/json
@@ -54,3 +77,92 @@ Content-Type: application/json
     "email": "incompleto@gmail.com",
     "phone": "(54) 91111-2222"
 }
+
+
+### ============================================================================
+### 2. ENDPOINT: LISTAGEM TOTAL (GET /users) - Permissão: admin
+### ============================================================================
+
+### Cenário de Sucesso: Admin visualiza a lista completa de usuários
+# Deve retornar Status 200 OK
+GET {{baseUrl}}/users
+Authorization: Bearer {{tokenAdmin}}
+
+### Cenário de Erro: Adotante tenta visualizar a lista completa
+# Regra: Deve retornar Status 403 Forbidden (Acesso negado)
+GET {{baseUrl}}/users
+Authorization: Bearer {{tokenAdopter}}
+
+### ============================================================================
+### 3. ENDPOINT: BUSCA POR ID (GET /users/:id) - Permissão: admin ou o próprio usuário
+### ============================================================================
+
+### Cenário de Sucesso: Usuário comum busca a SI MESMO (id: 2)
+# Deve retornar Status 200 OK com os dados do próprio perfil
+GET {{baseUrl}}/users/2
+Authorization: Bearer {{tokenAdopter}}
+
+### Cenário de Sucesso: Admin busca qualquer usuário pelo ID (id: 1)
+# Deve retornar Status 200 OK
+GET {{baseUrl}}/users/1
+Authorization: Bearer {{tokenAdmin}}
+
+### Cenário de Erro: Usuário comum tenta buscar os dados de OUTRO usuário (id: 1)
+# Regra: Deve retornar Status 403 Forbidden
+GET {{baseUrl}}/users/1
+Authorization: Bearer {{tokenAdopter}}
+
+### ============================================================================
+### 4. ENDPOINT: ATUALIZAÇÃO (PUT /users/:id) - Permissão: admin ou o próprio usuário
+### ============================================================================
+
+### Cenário de Sucesso: Usuário comum atualiza seus próprios dados (id: 2)
+# Deve retornar Status 200 OK
+PUT {{baseUrl}}/users/2
+Content-Type: application/json
+Authorization: Bearer {{tokenAdopter}}
+
+{
+    "name": "Adotante Atualizado"
+}
+
+### Cenário de Sucesso: Admin atualiza os dados de outro usuário (id: 2)
+# Deve retornar Status 200 OK
+PUT {{baseUrl}}/users/2
+Authorization: Bearer {{tokenAdopter}}
+Content-Type: application/json
+
+{
+    "name": "Adotante atualizado pelo admin"
+}
+
+### Cenário de Erro: Enviar atualização sem nenhum campo no body
+# Deve retornar Status 400 Bad Request (Pelo menos um campo deve ser informado)
+PUT {{baseUrl}}/users/2
+Content-Type: application/json
+Authorization: Bearer {{tokenAdopter}}
+
+{
+}
+
+### Cenário de Erro: Usuário comum tenta atualizar os dados de OUTRO usuário (id: 1)
+# Regra: Deve retornar Status 403 Forbidden
+PUT {{baseUrl}}/users/1
+Content-Type: application/json
+Authorization: Bearer {{tokenAdopter}}
+
+{
+    "name": "Admin atualizado"
+}
+
+### Cenário de Erro: Usuário comum tenta deletar outro usuário (id: 1)
+# Regra: Deve retornar Status 403 Forbidden
+DELETE {{baseUrl}}/users/3
+Authorization: Bearer {{tokenAdopter}}
+
+### Cenário de Sucesso: Admin tenta deletar um usuário comum (id: 3)
+# Regra: Deve retornar Status 403 Forbidden
+DELETE {{baseUrl}}/users/3
+Authorization: Bearer {{tokenAdmin}}
+
+
