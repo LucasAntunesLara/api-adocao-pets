@@ -1,0 +1,117 @@
+### Configuração de Variáveis Locais do REST Client
+@baseUrl = http://localhost:3000
+
+### 1. Autenticação como Administrador
+# @name loginAdmin
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "admin@gmail.com",
+    "password": "123123"
+}
+
+###
+
+@tokenAdmin = {{loginAdmin.response.body.token}}
+
+### 2. Autenticação como Adotante
+# @name loginAdopter
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "adotante@gmail.com",
+    "password": "123123"
+}
+
+###
+
+@tokenAdopter = {{loginAdopter.response.body.token}}
+
+### 3. Autenticação como outro Adotante
+# @name loginOtherAdopter
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "adotante2@gmail.com",
+    "password": "senhaAdotante123"
+}
+
+###
+
+@tokenOtherAdopter = {{loginOtherAdopter.response.body.token}}
+
+### ============================================================================
+### TESTES DO ENDPOINT POST /adoptions
+### ============================================================================
+
+### Cenário de Sucesso: Adotante realiza a adoção de um Pet disponível (ID 1)
+POST {{baseUrl}}/adoptions
+Content-Type: application/json
+Authorization: Bearer {{tokenAdopter}}
+
+{
+    "petId": 1
+}
+
+###
+
+### Cenário de Erro: Tentar adotar o MESMO pet novamente (ID 1)
+POST {{baseUrl}}/adoptions
+Content-Type: application/json
+Authorization: Bearer {{tokenAdopter}}
+
+{
+    "petId": 1
+}
+
+###
+
+### Cenário de Sucesso: Outro adotante adota um pet (ID 2)
+POST {{baseUrl}}/adoptions
+Content-Type: application/json
+Authorization: Bearer {{tokenOtherAdopter}}
+
+{
+    "petId": 2
+}
+
+###
+
+### Cenário de Erro: Tentar adotar um pet já adotado (ID 2)
+POST {{baseUrl}}/adoptions
+Content-Type: application/json
+Authorization: Bearer {{tokenAdopter}}
+
+{
+    "petId": 2
+}
+
+###
+
+### Cenário de Erro: Administrador tenta adotar um pet (ID 3)
+POST {{baseUrl}}/adoptions
+Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
+
+{
+    "petId": 3
+}
+
+###
+
+### ============================================================================
+### TESTES DO ENDPOINT GET /adoptions
+### ============================================================================
+
+### Cenário de Sucesso: Admin visualiza o histórico completo
+GET {{baseUrl}}/adoptions
+Authorization: Bearer {{tokenAdmin}}
+
+###
+
+### Cenário de Erro: Adotante comum tenta visualizar a lista global
+GET {{baseUrl}}/adoptions
+Authorization: Bearer {{tokenAdopter}}
