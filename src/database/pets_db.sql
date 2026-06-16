@@ -62,7 +62,7 @@ VALUES
         2,
         'dog',
         'medium',
-        'adopted',
+        'available',
         'Cãozinho muito dócil e brincalhão, ideal para casas com espaço.'
     ),
     (
