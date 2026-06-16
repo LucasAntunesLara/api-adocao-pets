@@ -1,4 +1,4 @@
-const db = require('../config/db')
+const pool = require('../config/db')
 
 class AdoptionModel {
   static async findAll() {
@@ -16,12 +16,12 @@ class AdoptionModel {
       INNER JOIN users u ON a.user_id = u.id
       INNER JOIN pets p ON a.pet_id = p.id
     `
-    const [rows] = await db.query(query)
+    const [rows] = await pool.query(query)
     return rows
   }
 
   static async findExistingAdoption(userId, petId) {
-    const [rows] = await db.query(
+    const [rows] = await pool.query(
       'SELECT * FROM adoptions WHERE user_id = ? AND pet_id = ?',
       [userId, petId],
     )
@@ -29,7 +29,7 @@ class AdoptionModel {
   }
 
   static async create(userId, petId) {
-    const connection = await db.getConnection()
+    const connection = await pool.getConnection()
     try {
       await connection.beginTransaction()
 

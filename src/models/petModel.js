@@ -1,10 +1,10 @@
-const db = require('../config/db')
+const pool = require('../config/db')
 
 class PetModel {
   static async create(petData) {
     const {name, age, species, size, description} = petData
 
-    const [result] = await db.query(
+    const [result] = await pool.query(
       'INSERT INTO pets (name, age, species, size, status, description) VALUES (?, ?, ?, ?, "available", ?)',
       [name, age, species, size, description],
     )
@@ -13,13 +13,13 @@ class PetModel {
   }
 
   static async findById(id) {
-    const [rows] = await db.query('SELECT * FROM pets WHERE id = ?', [id])
+    const [rows] = await pool.query('SELECT * FROM pets WHERE id = ?', [id])
 
     return rows[0]
   }
 
   static async findAvailable() {
-    const [rows] = await db.query(
+    const [rows] = await pool.query(
       'SELECT * FROM pets WHERE status = "available"',
     )
 
@@ -27,7 +27,7 @@ class PetModel {
   }
 
   static async findAll() {
-    const [rows] = await db.query('SELECT * FROM pets')
+    const [rows] = await pool.query('SELECT * FROM pets')
 
     return rows
   }
@@ -35,7 +35,7 @@ class PetModel {
   static async update(id, petData) {
     const {name, age, species, size, status, description} = petData
 
-    const [result] = await db.query(
+    const [result] = await pool.query(
       'UPDATE pets SET name = ?, age = ?, species = ?, size = ?, status = ?, description = ? WHERE id = ?',
       [name, age, species, size, status, description, id],
     )
@@ -44,7 +44,7 @@ class PetModel {
   }
 
   static async deletePet(id) {
-    const [result] = await db.query('DELETE FROM pets WHERE id = ?', [id])
+    const [result] = await pool.query('DELETE FROM pets WHERE id = ?', [id])
     return result.affectedRows
   }
 }
