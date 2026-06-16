@@ -5,9 +5,11 @@ require('dotenv').config()
 const {getConnection} = require('../connection')
 
 async function dropDatabase() {
+  // 1. Create a connection without selecting a database
   const connection = await getConnection({useDatabase: false})
 
   try {
+    // 2. Read the .sql script file as a text string
     const scriptPath = path.join(__dirname, '../drop_database.sql')
     const sqlScript = fs.readFileSync(scriptPath, 'utf8')
 
