@@ -1,5 +1,3 @@
-// const connection = require('../../config/db')
-
 const drop = require('./dropDatabase')
 const migrations = require('./runMigrations')
 const seeder = require('./seedMigrations')

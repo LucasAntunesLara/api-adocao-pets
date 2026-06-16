@@ -2,7 +2,7 @@
 const fs = require('fs')
 const path = require('path')
 require('dotenv').config()
-const {getConnection} = require('../connection')
+const {getConnection} = require('../../config/db')
 
 async function runMigrations() {
   const connection = await getConnection({useDatabase: false})
