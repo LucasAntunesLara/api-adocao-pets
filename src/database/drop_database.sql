@@ -1,0 +1,1 @@
+DROP DATABASE IF EXISTS pets_db;
