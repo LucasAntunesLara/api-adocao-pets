@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
-const { getConnection } = require('../../config/db');
+const getConnection = require('../../config/connection');
 
 async function dropDatabase() {
   const connection = await getConnection({ useDatabase: false });
