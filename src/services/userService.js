@@ -35,13 +35,7 @@ class UserService {
     };
   }
 
-  static async findAll(user) {
-    if (user.role !== 'admin') {
-      const error = new Error('Acesso negado.');
-      error.status = 403;
-      throw error;
-    }
-
+  static async findAll() {
     return userModel.findAll();
   }
 
@@ -106,19 +100,12 @@ class UserService {
     await userModel.update(id, { name: updatedName, phone: updatedPhone });
   }
 
-  static async deleteUser(id, user) {
+  static async deleteUser(id) {
     if (!Number.isInteger(id) || id <= 0) {
       const error = new Error('ID inválido.');
       error.status = 400;
       throw error;
     }
-
-    if (user.role !== 'admin') {
-      const error = new Error('Acesso negado.');
-      error.status = 403;
-      throw error;
-    }
-
     const existingUser = await userModel.findById(id);
 
     if (!existingUser) {

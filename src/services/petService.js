@@ -5,14 +5,7 @@ class PetService {
     return await PetModel.findAvailable();
   }
 
-  static async getAllPets(user) {
-    if (!user || user.role !== 'admin') {
-      const error = new Error(
-        'Acesso negado: apenas administradores podem visualizar todos os pets (inclusive os já adotados).'
-      );
-      error.status = 403;
-      throw error;
-    }
+  static async getAllPets() {
     return await PetModel.findAll();
   }
 
@@ -23,27 +16,11 @@ class PetService {
     return pet;
   }
 
-  static async createPet(pet, user) {
-    if (!user || user.role !== 'admin') {
-      const error = new Error(
-        'Acesso negado: apenas administradores podem criar pets.'
-      );
-      error.status = 403;
-      throw error;
-    }
-
+  static async createPet(pet) {
     return await PetModel.create(pet);
   }
 
-  static async updatePet(id, pet, user) {
-    if (!user || user.role !== 'admin') {
-      const error = new Error(
-        'Acesso negado: apenas administradores podem criar pets.'
-      );
-      error.status = 403;
-      throw error;
-    }
-
+  static async updatePet(id, pet) {
     const petExists = await PetModel.findById(id);
     if (!petExists) {
       const error = new Error('Pet não encontrado.');
@@ -61,15 +38,7 @@ class PetService {
     return updatedRows;
   }
 
-  static async deletePet(id, user) {
-    if (!user || user.role !== 'admin') {
-      const error = new Error(
-        'Acesso negado: apenas administradores podem remover pets.'
-      );
-      error.status = 403;
-      throw error;
-    }
-
+  static async deletePet(id) {
     const pet = await PetModel.findById(id);
 
     if (pet && pet.status === 'adopted') {
