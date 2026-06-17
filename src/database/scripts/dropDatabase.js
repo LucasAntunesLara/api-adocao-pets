@@ -1,31 +1,29 @@
-/* eslint-disable no-undef */
-const fs = require('fs')
-const path = require('path')
-require('dotenv').config()
-const {getConnection} = require('../../config/db')
+/* eslint-disable no-console */
+const fs = require('fs');
+const path = require('path');
+require('dotenv').config();
+const { getConnection } = require('../../config/db');
 
 async function dropDatabase() {
-  // 1. Create a connection without selecting a database
-  const connection = await getConnection({useDatabase: false})
+  const connection = await getConnection({ useDatabase: false });
 
   try {
-    // 2. Read the .sql script file as a text string
-    const scriptPath = path.join(__dirname, '../drop_database.sql')
-    const sqlScript = fs.readFileSync(scriptPath, 'utf8')
+    const scriptPath = path.join(__dirname, '../drop_database.sql');
+    const sqlScript = fs.readFileSync(scriptPath, 'utf8');
 
     console.log(
-      '=============Deletando banco de dados **pets_db**...=============',
-    )
+      '=============Deletando banco de dados **pets_db**...============='
+    );
 
-    await connection.query(sqlScript)
+    await connection.query(sqlScript);
 
-    console.log('=============Banco deletado com sucesso!=============')
+    console.log('=============Banco deletado com sucesso!=============');
   } catch (error) {
-    console.error('Erro ao deletar banco de dados:', error)
+    console.error('Erro ao deletar banco de dados:', error);
   } finally {
-    await connection.end()
+    await connection.end();
   }
 }
 module.exports = {
   dropDatabase,
-}
+};

@@ -1,16 +1,16 @@
-const express = require('express')
+const express = require('express');
 
-const adoptionRoutes = require('./routes/adoptionRoutes')
-const authRoutes = require('./routes/authRoutes')
-const userRoutes = require('./routes/userRoutes')
-const petRoutes = require('./routes/petRoutes')
+const adoptionRoutes = require('./routes/adoptionRoutes');
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+const petRoutes = require('./routes/petRoutes');
 
-const app = express()
+const app = express();
 
-app.use(express.json())
-app.use('/', authRoutes)
-app.use('/users', userRoutes)
-app.use('/pets', petRoutes)
-app.use('/adoptions', adoptionRoutes)
+app.use(express.json());
+app.use('/', authRoutes);
+app.use('/users', userRoutes);
+app.use('/pets', petRoutes);
+app.use('/adoptions', adoptionRoutes);
 
-module.exports = app
+module.exports = app;

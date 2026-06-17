@@ -1,52 +1,52 @@
-const pool = require('../config/db')
+const pool = require('../config/db');
 
 class PetModel {
   static async create(petData) {
-    const {name, age, species, size, description} = petData
+    const { name, age, species, size, description } = petData;
 
     const [result] = await pool.query(
       'INSERT INTO pets (name, age, species, size, status, description) VALUES (?, ?, ?, ?, "available", ?)',
-      [name, age, species, size, description],
-    )
+      [name, age, species, size, description]
+    );
 
-    return result.insertId
+    return result.insertId;
   }
 
   static async findById(id) {
-    const [rows] = await pool.query('SELECT * FROM pets WHERE id = ?', [id])
+    const [rows] = await pool.query('SELECT * FROM pets WHERE id = ?', [id]);
 
-    return rows[0]
+    return rows[0];
   }
 
   static async findAvailable() {
     const [rows] = await pool.query(
-      'SELECT * FROM pets WHERE status = "available"',
-    )
+      'SELECT * FROM pets WHERE status = "available"'
+    );
 
-    return rows
+    return rows;
   }
 
   static async findAll() {
-    const [rows] = await pool.query('SELECT * FROM pets')
+    const [rows] = await pool.query('SELECT * FROM pets');
 
-    return rows
+    return rows;
   }
 
   static async update(id, petData) {
-    const {name, age, species, size, status, description} = petData
+    const { name, age, species, size, status, description } = petData;
 
     const [result] = await pool.query(
       'UPDATE pets SET name = ?, age = ?, species = ?, size = ?, status = ?, description = ? WHERE id = ?',
-      [name, age, species, size, status, description, id],
-    )
+      [name, age, species, size, status, description, id]
+    );
 
-    return result.affectedRows
+    return result.affectedRows;
   }
 
   static async deletePet(id) {
-    const [result] = await pool.query('DELETE FROM pets WHERE id = ?', [id])
-    return result.affectedRows
+    const [result] = await pool.query('DELETE FROM pets WHERE id = ?', [id]);
+    return result.affectedRows;
   }
 }
 
-module.exports = PetModel
+module.exports = PetModel;

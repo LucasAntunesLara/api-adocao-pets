@@ -1,4 +1,4 @@
-const pool = require('../config/db')
+const pool = require('../config/db');
 
 class AdoptionModel {
   static async findAll() {
@@ -15,48 +15,48 @@ class AdoptionModel {
       FROM adoptions a
       INNER JOIN users u ON a.user_id = u.id
       INNER JOIN pets p ON a.pet_id = p.id
-    `
-    const [rows] = await pool.query(query)
-    return rows
+    `;
+    const [rows] = await pool.query(query);
+    return rows;
   }
 
   static async findExistingAdoption(userId, petId) {
     const [rows] = await pool.query(
       'SELECT * FROM adoptions WHERE user_id = ? AND pet_id = ?',
-      [userId, petId],
-    )
-    return rows[0]
+      [userId, petId]
+    );
+    return rows[0];
   }
 
   static async create(userId, petId) {
-    const connection = await pool.getConnection()
+    const connection = await pool.getConnection();
     try {
-      await connection.beginTransaction()
+      await connection.beginTransaction();
 
-      const adoptionDate = new Date()
+      const adoptionDate = new Date();
 
       const [adoptionResult] = await connection.query(
         'INSERT INTO adoptions (user_id, pet_id, adoption_date) VALUES (?, ?, ?)',
-        [userId, petId, adoptionDate],
-      )
+        [userId, petId, adoptionDate]
+      );
 
       await connection.query(
         'UPDATE pets SET status = "adopted" WHERE id = ?',
-        [petId],
-      )
+        [petId]
+      );
 
       // Confirma as duas alterações no banco
-      await connection.commit()
-      return adoptionResult.insertId
+      await connection.commit();
+      return adoptionResult.insertId;
     } catch (error) {
       // Desfaz tudo se houver qualquer erro
-      await connection.rollback()
-      throw error
+      await connection.rollback();
+      throw error;
     } finally {
       // Libera a conexão de volta para o pool
-      connection.release()
+      connection.release();
     }
   }
 }
 
-module.exports = AdoptionModel
+module.exports = AdoptionModel;
