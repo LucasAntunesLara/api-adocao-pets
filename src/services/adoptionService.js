@@ -2,26 +2,11 @@ const AdoptionModel = require('../models/adoptionModel');
 const PetModel = require('../models/petModel');
 
 class AdoptionService {
-  static async getAllAdoptions(user) {
-    if (!user || user.role !== 'admin') {
-      const error = new Error(
-        'Acesso negado: apenas administradores podem visualizar o histórico de adoções.'
-      );
-      error.status = 403;
-      throw error;
-    }
+  static async getAllAdoptions() {
     return await AdoptionModel.findAll();
   }
 
   static async createAdoption(petId, user) {
-    if (!user || user.role !== 'adopter') {
-      const error = new Error(
-        'Acesso negado: apenas usuários com perfil "adopter" podem realizar adoções.'
-      );
-      error.status = 403;
-      throw error;
-    }
-
     const pet = await PetModel.findById(petId);
     if (!pet) {
       const error = new Error('O pet informado não existe.');
