@@ -11,9 +11,6 @@
     "lint:report": "eslint . --format json -o eslint-report.json",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "db:migrate": "node src/database/scripts/runMigrations.js",
-    "db:seed": "node src/database/scripts/seedMigrations.js",
-    "db:drop": "node src/database/scripts/dropDatabase.js",
     "db:refresh": "node src/database/scripts/refreshDatabase.js"
   },
   "author": "Lucas Antunes de Lara",
