@@ -25,10 +25,11 @@ class AuthService {
       role: user.role,
     };
 
-    // eslint-disable-next-line no-undef
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: '1h'});
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
 
-    return {token};
+    return { token };
   }
 }
 

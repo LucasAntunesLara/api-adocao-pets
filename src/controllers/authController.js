@@ -3,12 +3,12 @@ const authService = require('../services/authService');
 class AuthController {
   static async login(req, res) {
     try {
-      const {email, password} = req.body;
+      const { email, password } = req.body;
 
       if (!email || !password)
         return res
           .status(400)
-          .json({message: 'Preencha todos os campos obrigatórios.'});
+          .json({ message: 'Preencha todos os campos obrigatórios.' });
 
       const tokenData = await authService.authenticate(email, password);
 
@@ -17,7 +17,7 @@ class AuthController {
         token: tokenData.token,
       });
     } catch (error) {
-      return res.status(error.status || 401).json({message: error.message});
+      return res.status(error.status || 401).json({ message: error.message });
     }
   }
 }
